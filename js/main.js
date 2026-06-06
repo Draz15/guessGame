@@ -9,7 +9,7 @@ document.querySelector('footer').innerHTML = `${gameName} Created By Me`
 
 // Mange Words
 
-let words = ["YouseF", "Khaled", "mohammed", "Metwaly", "Ehab", "Saleh", "Foda", "Mariam", "Mayar", "Noor", "blue"];
+let words = ["YouseF", "Khaled", "mohammed", "Metwaly", "Ehab", "Saleh", "Foda", "Mariam", "Mayar", "Noor", "blue","Eslam"];
 
 // save the wordGUessed to prevent it to change when reload
 
