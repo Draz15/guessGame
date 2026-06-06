@@ -144,17 +144,17 @@ h1::before {
 }
 
 .inputs > div input.yes-in-place {
-    background: var(--orange);
-    border-color: var(--orange);
-    color: #fff;
-    box-shadow: 0 2px 8px rgba(197,106,32,0.35);
-}
-
-.inputs > div input.not-in-place {
     background: var(--teal);
     border-color: var(--teal);
     color: #fff;
     box-shadow: 0 2px 8px rgba(10,171,144,0.3);
+}
+
+.inputs > div input.not-in-place {
+    background: var(--orange);
+    border-color: var(--orange);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(197,106,32,0.35);
 }
 
 .inputs > div input.not {
@@ -273,8 +273,8 @@ h1::before {
     flex-shrink: 0;
 }
 
-.key.in-place     { background: var(--orange); box-shadow: 0 2px 8px rgba(197,106,32,0.4); }
-.key.not-in-place { background: var(--teal);   box-shadow: 0 2px 8px rgba(10,171,144,0.35); }
+.key.in-place { background: var(--teal);   box-shadow: 0 2px 8px rgba(10,171,144,0.35); }
+.key.not-in-place     { background: var(--orange); box-shadow: 0 2px 8px rgba(197,106,32,0.4); }
 .key.not          { background: var(--navy); }
 
 .key-text {
