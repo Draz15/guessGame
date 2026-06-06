@@ -1,5 +1,5 @@
-import { savedata, pasteSavedData, dataContainer } from './module/saveData.js'
 import { hint, hint_value } from './module/hint.js'
+import { savedata, pasteSavedData, dataContainer } from './module/saveData.js'
 
 // manage game title
 

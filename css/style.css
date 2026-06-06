@@ -356,6 +356,10 @@ footer {
         grid-template-columns: 1fr;
         justify-content: center;
     }
+    .inputs > div{
+        gap: 15px;
+        justify-content: space-evenly;
+    }
 
     .key-colors { order: -1; }
     .startContainer { flex-direction: row; }

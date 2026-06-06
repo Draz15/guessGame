@@ -1,5 +1,5 @@
-import { numberOfAttempts, numberOfLetters, wordToGuess, guessBtn} from '../main.js'
-import { hint } from './hint.js'
+import { numberOfAttempts, numberOfLetters,numberOfHints, wordToGuess, guessBtn} from '../main.js'
+import { hint,hint_value } from './hint.js'
 
 // mange save data imputed by user
 export let dataContainer = JSON.parse(sessionStorage.getItem('Data_Container')) || []
@@ -74,6 +74,12 @@ export function pasteSavedData() {
         guessBtn.disabled = true
         hint.disabled = true
     }
+    // save Number Of Hints even if user reload
+     let savedHints = JSON.parse(sessionStorage.getItem('savedHints')) ?? numberOfHints
+     if(savedHints == 0){
+        hint_value.innerHTML = 0
+        hint.disabled = true
+     }
 
     // save Message even if user reload
     const message = document.querySelector('.message')

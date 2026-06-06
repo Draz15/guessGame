@@ -12,12 +12,8 @@ function getHint() {
 
     // determining numberOfHints based on word length
 
-    if (sessionStorage.getItem('savedHints') === null) {
-        sessionStorage.setItem('savedHints', JSON.stringify(numberOfHints));
-    }
-    let numberOfHintsIn = JSON.parse(sessionStorage.getItem('savedHints'));
-
-    console.log(numberOfHintsIn)
+    
+    let numberOfHintsIn = JSON.parse(sessionStorage.getItem('savedHints')) || numberOfHints
 
     if (activeInputs.length > 0) {
         if (numberOfHintsIn > 0) {
