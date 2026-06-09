@@ -9,8 +9,7 @@ document.querySelector('footer').innerHTML = `${gameName} Created By Me`
 
 // Mange Words
 
-let words = ["YouseF", "Khaled", "mohammed", "Metwaly", "Ehab", "Saleh", "Foda", "Mariam", "Mayar", "Noor", "blue","Eslam"];
-
+let words = ["YouseF", "Khaled", "mohammed", "Metwaly", "Ehab", "Saleh", "Foda", "Mariam", "Mayar", "Noor", "blue", "Eslam"];
 // save the wordGUessed to prevent it to change when reload
 
 export let wordToGuess;
@@ -24,6 +23,8 @@ changeBtn.addEventListener('click', changeWord)
 restartBtn.addEventListener('click', () => {
     sessionStorage.removeItem('Data_Container');
     sessionStorage.removeItem('savedMessage');
+    sessionStorage.removeItem('letsToCheck')
+    sessionStorage.removeItem('numOfLetsToCheck')
     sessionStorage.removeItem('savedHints');
     location.reload()
 })
@@ -32,6 +33,8 @@ function changeWord() {
     wordToGuess = words.length >= 0 ? words[Math.floor(Math.random() * words.length)].toLowerCase() : "";
     sessionStorage.setItem('saveWord', wordToGuess);
     sessionStorage.removeItem('Data_Container');
+    sessionStorage.removeItem('letsToCheck')
+    sessionStorage.removeItem('numOfLetsToCheck')
     sessionStorage.removeItem('savedMessage');
     sessionStorage.removeItem('savedHints');  // ← is this there?
     location.reload()
@@ -41,7 +44,6 @@ if (savedWord) {
 } else {
     changeWord()
 }
-
 
 // setting Game Options 
 
@@ -135,8 +137,12 @@ document.addEventListener('keydown', (event) => {
     }
 })
 
+// start handleGuess function
+
 function handleGuess() {
     let success = true
+    const letsToCheck = JSON.parse(sessionStorage.getItem('letsToCheck')) ?? {}
+    const numOfLetsToCheck = JSON.parse(sessionStorage.getItem('numOfLetsToCheck')) ?? {}
 
     for (let i = 1; i <= numberOfLetters; i++) {
         const inputField = document.querySelector(`#guess-${currentTry}-letter-${i}`)
@@ -151,13 +157,30 @@ function handleGuess() {
         const letter = inputField.value.toLowerCase()
         const actualLetter = wordToGuess[i - 1]
 
+        // checking length of every letter
+
+        if (wordToGuess.indexOf(letter) != -1 && !(letter in letsToCheck)) {
+            let exist = Object.values(letsToCheck).some(value => value.includes(letter))
+
+            if (!exist) {
+                letsToCheck[letter] = [...wordToGuess].filter(value => value.toLowerCase() == letter)
+                numOfLetsToCheck[letter] = letsToCheck[letter].length
+
+                // save each obj 
+                sessionStorage.setItem('letsToCheck', JSON.stringify(letsToCheck))
+                sessionStorage.setItem('numOfLetsToCheck', JSON.stringify(numOfLetsToCheck))
+            }
+        }
+
         if (letter === actualLetter && letter !== "") {
             inputField.classList.add('yes-in-place')
+            --numOfLetsToCheck[letter]
         }
-        else if (wordToGuess.includes(letter) && letter !== "") {
+        else if (wordToGuess.includes(letter) && letter !== "" && numOfLetsToCheck[letter] != 0) {
             success = false
             inputField.classList.add('not-in-place')
-        } else if (!(wordToGuess.includes(letter))) {
+            numOfLetsToCheck[letter]--
+        } else {
             success = false
             inputField.classList.add('not')
         }
@@ -186,7 +209,6 @@ function handleGuess() {
 
         }
 
-
     } else {
         guessBtn.disabled = true
         hint.disabled = true
@@ -200,15 +222,6 @@ function handleGuess() {
     else message.style.color = "#c44"
     savedata()
 }
-
-
-// determining numberOfHints based on word length
-
-// export let numberOfHints = 0
-// if(wordToGuess.length > 5) numberOfHints = 3 
-// else if(wordToGuess.length > 3) numberOfHints = 2
-// else numberOfHints = 1 
-
 
 window.onload = () => {
     inputsGenerator()
