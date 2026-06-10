@@ -23,8 +23,7 @@ changeBtn.addEventListener('click', changeWord)
 restartBtn.addEventListener('click', () => {
     sessionStorage.removeItem('Data_Container');
     sessionStorage.removeItem('savedMessage');
-    sessionStorage.removeItem('letsToCheck')
-    sessionStorage.removeItem('numOfLetsToCheck')
+    sessionStorage.removeItem('arrLetsToCheck');
     sessionStorage.removeItem('savedHints');
     location.reload()
 })
@@ -33,10 +32,9 @@ function changeWord() {
     wordToGuess = words.length >= 0 ? words[Math.floor(Math.random() * words.length)].toLowerCase() : "";
     sessionStorage.setItem('saveWord', wordToGuess);
     sessionStorage.removeItem('Data_Container');
-    sessionStorage.removeItem('letsToCheck')
-    sessionStorage.removeItem('numOfLetsToCheck')
     sessionStorage.removeItem('savedMessage');
-    sessionStorage.removeItem('savedHints');  // ← is this there?
+    sessionStorage.removeItem('arrLetsToCheck');
+    sessionStorage.removeItem('savedHints');
     location.reload()
 }
 if (savedWord) {
@@ -136,13 +134,13 @@ document.addEventListener('keydown', (event) => {
         handleGuess()
     }
 })
+const arrLetsToCheck = JSON.parse(sessionStorage.getItem('arrLetsToCheck')) ?? [];
 
 // start handleGuess function
-
 function handleGuess() {
     let success = true
-    const letsToCheck = JSON.parse(sessionStorage.getItem('letsToCheck')) ?? {}
-    const numOfLetsToCheck = JSON.parse(sessionStorage.getItem('numOfLetsToCheck')) ?? {}
+    const letsToCheck = {}
+    const numOfLetsToCheck = {}
 
     for (let i = 1; i <= numberOfLetters; i++) {
         const inputField = document.querySelector(`#guess-${currentTry}-letter-${i}`)
@@ -167,16 +165,18 @@ function handleGuess() {
                 numOfLetsToCheck[letter] = letsToCheck[letter].length
 
                 // save each obj 
-                sessionStorage.setItem('letsToCheck', JSON.stringify(letsToCheck))
-                sessionStorage.setItem('numOfLetsToCheck', JSON.stringify(numOfLetsToCheck))
             }
         }
 
         if (letter === actualLetter && letter !== "") {
             inputField.classList.add('yes-in-place')
-            --numOfLetsToCheck[letter]
+            if (numOfLetsToCheck[letter] < 1) {
+                numOfLetsToCheck[letter] = 0
+            } else {
+                --numOfLetsToCheck[letter]
+            }
         }
-        else if (wordToGuess.includes(letter) && letter !== "" && numOfLetsToCheck[letter] != 0) {
+        else if (wordToGuess.includes(letter) && letter !== "" && numOfLetsToCheck[letter] > 0) {
             success = false
             inputField.classList.add('not-in-place')
             numOfLetsToCheck[letter]--
@@ -184,7 +184,12 @@ function handleGuess() {
             success = false
             inputField.classList.add('not')
         }
+        console.log(numOfLetsToCheck)
     }
+    arrLetsToCheck.push(structuredClone(letsToCheck))
+    console.log(arrLetsToCheck)
+    sessionStorage.setItem('arrLetsToCheck', JSON.stringify(arrLetsToCheck))
+
     if (!success) {
         let divContainer = document.querySelectorAll(`.inputs > div`)
         document.querySelector(`.try-${currentTry}`).classList.add('disabled-inputs')

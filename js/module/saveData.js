@@ -1,5 +1,5 @@
-import { numberOfAttempts, numberOfLetters,numberOfHints, wordToGuess, guessBtn} from '../main.js'
-import { hint,hint_value } from './hint.js'
+import { numberOfAttempts, numberOfLetters, numberOfHints, wordToGuess, guessBtn } from '../main.js'
+import { hint, hint_value } from './hint.js'
 
 // mange save data imputed by user
 export let dataContainer = JSON.parse(sessionStorage.getItem('Data_Container')) || []
@@ -29,6 +29,8 @@ export function savedata() {
     }
 }
 
+const arrLetsToCheck = JSON.parse(sessionStorage.getItem('arrLetsToCheck')) ?? [];
+
 export function pasteSavedData() {
     const inputsContainer = document.querySelectorAll(".inputs > div")
     const newInputsContainer = Array.from(inputsContainer)
@@ -38,16 +40,30 @@ export function pasteSavedData() {
     if (dataContainer.length > 0) {
         for (let i = 0; i < dataContainer.length; i++) {
             let inputs = EmptyRow[i]
-
+            let numOfLetsToCheck = {}
             for (let j = 0; j < numberOfLetters; j++) {
                 // assign every savedData to word
                 inputs[j].value = dataContainer[i][j]
+                const letter = dataContainer[i][j]
+                if (!(letter in numOfLetsToCheck)) {
+                    numOfLetsToCheck[letter] = arrLetsToCheck[i]?.[letter]?.length
+                }
 
                 // give every word here background based on data assigned
 
-                if (dataContainer[i][j].toLowerCase() === wordToGuess[j].toLowerCase()) inputs[j].classList.add('yes-in-place');
+                if (dataContainer[i][j].toLowerCase() === wordToGuess[j].toLowerCase()) {
+                    inputs[j].classList.add('yes-in-place');
+                    if (numOfLetsToCheck[letter] < 1) {
+                        numOfLetsToCheck[letter] = 0
+                    } else {
+                        --numOfLetsToCheck[letter]
+                    }
+                }
 
-                else if (wordToGuess.includes(dataContainer[i][j].toLowerCase())) inputs[j].classList.add('not-in-place');
+                else if (wordToGuess.includes(dataContainer[i][j].toLowerCase()) && numOfLetsToCheck[letter] > 0) {
+                    inputs[j].classList.add('not-in-place');
+                    --numOfLetsToCheck[letter]
+                }
 
                 else if (!(wordToGuess.includes(dataContainer[i][j]))) inputs[j].classList.add('not')
             }
@@ -75,11 +91,11 @@ export function pasteSavedData() {
         hint.disabled = true
     }
     // save Number Of Hints even if user reload
-     let savedHints = JSON.parse(sessionStorage.getItem('savedHints')) ?? numberOfHints
-     if(savedHints == 0){
+    let savedHints = JSON.parse(sessionStorage.getItem('savedHints')) ?? numberOfHints
+    if (savedHints == 0) {
         hint_value.innerHTML = 0
         hint.disabled = true
-     }
+    }
 
     // save Message even if user reload
     const message = document.querySelector('.message')
